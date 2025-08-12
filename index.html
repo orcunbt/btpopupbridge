@@ -7,7 +7,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="style.css">
-  
+
+    <script>
+    (function() {
+      // Keep a reference to the original addEventListener
+      const origAdd = window.addEventListener;
+
+      // Override window.addEventListener
+      window.addEventListener = function(type, handler, options) {
+        if (type === 'message') {
+          // Wrap the SDK’s handler so we can filter events
+          const filtered = function(event) {
+            let data;
+            try {
+              data = typeof event.data === 'string'
+                ? JSON.parse(event.data)
+                : event.data;
+            } catch (_) {
+              return; // not JSON ⇒ ignore
+            }
+            if (data.opType === undefined) {
+              // Drop anything without a valid opType…
+              event.stopImmediatePropagation();  // Prevents all later 'message' listeners :contentReference[oaicite:0]{index=0}
+              return;
+            }
+            // Only genuine messages make it through
+            return handler.call(this, event);
+          };
+          // Use capture so it runs before the SDK’s non-capturing listener :contentReference[oaicite:1]{index=1}
+          return origAdd.call(this, type, filtered, true);
+        }
+        // All other events proceed as normal
+        return origAdd.call(this, type, handler, options);
+      };
+    })();
+  </script>
+  <script src="https://js.braintreegateway.com/web/3.125.0/js/paypal-checkout.js"></script>
 </head>
 
 <body>
@@ -19,25 +54,8 @@
 
   <div id="paypal-button-container"></div>
   <pre id="log"></pre>
-  <script>
-// Swallow any message without an opType before the SDK sees it
-window.addEventListener('message', function (event) {
-  let data;
-  try {
-    data = typeof event.data === 'string'
-      ? JSON.parse(event.data)
-      : event.data;
-  } catch (err) {
-    return; // not JSON, ignore
-  }
 
-  // If there's no opType, stop here
-  if (!data.opType) {
-    event.stopImmediatePropagation(); // prevent other handlers (i.e. the SDK’s) from running :contentReference[oaicite:1]{index=1}
-  }
-}, true /* capture */);
-</script>
-<script src="https://js.braintreegateway.com/web/3.125.0/js/paypal-checkout.js"></script>
+
   <script>
     var log = document.querySelector('#log');
 
