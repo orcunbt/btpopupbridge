@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="style.css">
-  <script src="https://js.braintreegateway.com/web/3.125.0/js/paypal-checkout.js"></script>
+  
 </head>
 
 <body>
@@ -19,7 +19,25 @@
 
   <div id="paypal-button-container"></div>
   <pre id="log"></pre>
+  <script>
+// Swallow any message without an opType before the SDK sees it
+window.addEventListener('message', function (event) {
+  let data;
+  try {
+    data = typeof event.data === 'string'
+      ? JSON.parse(event.data)
+      : event.data;
+  } catch (err) {
+    return; // not JSON, ignore
+  }
 
+  // If there's no opType, stop here
+  if (!data.opType) {
+    event.stopImmediatePropagation(); // prevent other handlers (i.e. the SDK’s) from running :contentReference[oaicite:1]{index=1}
+  }
+}, true /* capture */);
+</script>
+<script src="https://js.braintreegateway.com/web/3.125.0/js/paypal-checkout.js"></script>
   <script>
     var log = document.querySelector('#log');
 
