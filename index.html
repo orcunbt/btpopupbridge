@@ -73,7 +73,9 @@ window.addEventListener('message', event => {
     return;
   }
     // Otherwise handle real errors…
-    console.error('Real error:', err);
+
+              console.log(Real error:', err);
+    log.innerText = err.message;
      
         }
       }).render('#paypal-button-container');
