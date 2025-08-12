@@ -67,16 +67,11 @@ window.addEventListener('message', event => {
         },
 
         onError: function (err) {
-           console.log('🤖 onError payload:', err);
-  console.log('err.name:', err.name, 'err.code:', err.code, 'err.message:', err.message);
-              // Treat UserCanceledException as a cancellation
-    if (err.name === 'UserCanceledException'
-     || (err.message && err.message.includes('User canceled PayPal'))) {
-      console.log('Flow cancelled via window close');
-      log.innerText = 'Flow cancelled via window close';
-      // your cancel-cleanup logic here
-      return;
-    }
+  if (msg.startsWith('Unhandleable opType')) {
+    console.log('Flow cancelled via window close');
+    log.innerText = 'Flow cancelled via window close';
+    return;
+  }
     // Otherwise handle real errors…
     console.error('Real error:', err);
      
