@@ -7,21 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="style.css">
-  <script>
-// Run first, before loading any Braintree/PayPal script
-window.addEventListener('message', event => {
-  // Allow PayPal origin messages (adjust if you use other endpoints)
-  const allowed = [
-    'https://www.paypal.com',
-    'https://www.sandbox.paypal.com'
-  ];
-
-  if (!allowed.includes(event.origin)) {
-    // Prevent unrelated postMessages (your own code or other widgets)
-    event.stopImmediatePropagation();
-  }
-}, true /* capture */);
-</script>
 
   <script src="https://js.braintreegateway.com/web/3.125.0/js/paypal-checkout.js"></script>
 </head>
@@ -66,6 +51,18 @@ window.addEventListener('message', event => {
           log.innerText = 'User cancelled';
         },
 
+        onError: function (err) {
+  if (err.message.startsWith('Unhandleable opType')) {
+    console.log('Flow cancelled via window close');
+    log.innerText = 'Flow cancelled via window close';
+    return;
+  }
+    // Otherwise handle real errors…
+
+              console.log('Real error:', err);
+    log.innerText = err.message;
+     
+        }
 
       }).render('#paypal-button-container');
     }).catch(function (err) {
