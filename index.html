@@ -52,7 +52,7 @@
         },
 
 onError: function (err) {
-  if (err.message.includes('Unhandleable opType')) {
+  if (err.message.startsWith('Unhandleable opType') || err.message.startsWith('Error: Unhandleable opTypeError')) {
     console.log('Flow cancelled via window close');
     log.innerText = 'Flow cancelled via window close';
     
