@@ -66,18 +66,7 @@ window.addEventListener('message', event => {
           log.innerText = 'User cancelled';
         },
 
-        onError: function (err) {
-  if (err.message.startsWith('Unhandleable opType')) {
-    console.log('Flow cancelled via window close');
-    log.innerText = 'Flow cancelled via window close';
-    return;
-  }
-    // Otherwise handle real errors…
 
-              console.log('Real error:', err);
-    log.innerText = err.message;
-     
-        }
       }).render('#paypal-button-container');
     }).catch(function (err) {
       console.error('Error!', err);
