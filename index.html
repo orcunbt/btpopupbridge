@@ -55,14 +55,16 @@ onError: function (err) {
   if (err.message.includes('Unhandleable opType')) {
     console.log('Flow cancelled via window close');
     log.innerText = 'Flow cancelled via window close';
-  }
+    
+  } else {
     // Otherwise handle real errors…
 
               console.log('Real error:', err);
     log.innerText = err.message;
-  return;
+  
      
         }
+}
 
       }).render('#paypal-button-container');
     }).catch(function (err) {
