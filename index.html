@@ -51,17 +51,19 @@
           log.innerText = 'User cancelled';
         },
 
-        onError: function (err) {
-  if (err.message.startsWith('Unhandleable opType')) {
-    console.log('Flow cancelled via window close');
-    log.innerText = 'Flow cancelled via window close';
-  }
-    // Otherwise handle real errors…
+onError: function (err) {
+  console.log("Full error object:", err);
+  let message = (typeof err === "string") ? err : err?.message || "Unknown error";
 
-              console.log('Real error:', err);
-    log.innerText = err.message;
-     
-        }
+  if (message.includes("Unhandleable opType") || message.includes("window closed")) {
+    console.log("Flow cancelled via window close");
+    log.innerText = "Flow cancelled via window close";
+  } else {
+    console.log("Real error:", message);
+    log.innerText = message;
+  }
+}
+
 
       }).render('#paypal-button-container');
     }).catch(function (err) {
