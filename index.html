@@ -63,7 +63,7 @@
     
     if (cancellationErrors.some(cancelErr => errorMessage.includes(cancelErr))) {
       // Route to cancellation handler
-      console.log('onError route:', cancelErr);
+      console.log('onError route:', errorMessage);
       return;
     }
     
