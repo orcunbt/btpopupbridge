@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="style.css">
 
-  <script src="https://js.braintreegateway.com/web/3.125.0/js/paypal-checkout.js"></script>
+  <script src="https://js.braintreegateway.com/web/3.127.0/js/paypal-checkout.js"></script>
 </head>
 
 <body>
@@ -51,15 +51,25 @@
           log.innerText = 'User cancelled';
         },
 
-onError: function (err) {
-  if (err.message.startsWith('Unhandleable opType') || err.message.startsWith('Error: Unhandleable opTypeError')) {
-    console.log('Flow cancelled via window close');
-  } else {
-    // Otherwise handle real errors…
-
-              console.log('Real error:', err);
-        }
-}
+  onError: function (err) {
+    const errorMessage = err.toString();
+    const cancellationErrors = [
+      'Error: Detected popup close',
+      'Error: Popup closed by user',
+      'Error: Window closed',
+      'popup_closed_by_user',
+      'Unhandleable opType: undefined'
+    ];
+    
+    if (cancellationErrors.some(cancelErr => errorMessage.includes(cancelErr))) {
+      // Route to cancellation handler
+      onCancel (cancelErr)
+      return;
+    }
+    
+    // Handle genuine errors
+    console.log('Genuine error:', err);
+  }
 
       }).render('#paypal-button-container');
     }).catch(function (err) {
